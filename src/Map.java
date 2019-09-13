@@ -28,4 +28,29 @@ public class Map {
         return this.people;
     }
 
+    private boolean removeChunk(Chunk c) {
+        if (!c.getPeople().isEmpty()) {
+            System.out.println("This chunk contains a person");
+            return false;
+        }
+        if (!this.getChunks().contains(c)) {
+            System.out.println("Chunk not on map");
+            return false;
+        }
+        for (int i = 0; i < 4; i++) {
+            c.removeChunk(i, true);
+        }
+        this.getChunks().remove(c);
+        return true;
+    }
+
+    private boolean removePerson(Person p) {
+        if (!this.getPeople().contains(p)) {
+            System.out.println("No such person on map");
+            return false;
+        }
+        p.getChunk();
+        p.setChunk(null);
+    }
+
 }

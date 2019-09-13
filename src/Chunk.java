@@ -63,6 +63,9 @@ public class Chunk {
             this.getPeople().add(p);
             return true;
         }
+        p.setX(this.getX());
+        p.setY(this.getY());
+        p.setChunk(this);
         System.out.println("Chunk is full");
         return false;
     }
@@ -115,6 +118,35 @@ public class Chunk {
         return false;
     }
 
-    // TODO add removeChunk()
+    protected boolean removeChunk(int direction, boolean base) {
+        int opposite = 0;
+
+        // 0 is n, 1 is e, 2 is s, 3 is w
+        if (direction == 0) {
+            opposite = 2;
+        } else if (direction == 1) {
+            opposite = 3;
+        } else if (direction == 3) {
+            opposite = 1;
+        }
+        // else if direction == 2, opposite default of 0
+
+        if (this.getChunks()[direction] == null) {
+            System.out.println("There's no chunk in that direction");
+            if (!base) {
+                System.out.println("Other chunk wasn't linked with base chunk");
+            }
+            return false;
+        }
+
+        if (base) {
+            Chunk otherChunk = this.getChunks()[direction];
+            otherChunk.removeChunk(opposite, false);
+        }
+
+        this.getChunks()[direction] = null;
+        return true;
+
+    }
 
 }
