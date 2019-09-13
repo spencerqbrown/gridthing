@@ -61,11 +61,11 @@ public class Chunk {
     protected boolean addPerson(Person p) {
         if (!this.isFull()) {
             this.getPeople().add(p);
+            p.setX(this.getX());
+            p.setY(this.getY());
+            p.setChunk(this);
             return true;
         }
-        p.setX(this.getX());
-        p.setY(this.getY());
-        p.setChunk(this);
         System.out.println("Chunk is full");
         return false;
     }

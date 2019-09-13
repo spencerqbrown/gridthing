@@ -11,7 +11,7 @@ public class Map {
         this.people = new ArrayList<>();
     }
 
-    private boolean placeChunk(Chunk c, boolean isCore) {
+    protected boolean placeChunk(Chunk c, boolean isCore) {
         if (this.getChunks().contains(c)) {
             System.out.println("Chunk already in map");
             return false;
@@ -24,7 +24,7 @@ public class Map {
         return this.chunks;
     }
 
-    private ArrayList<Person> getPeople() {
+    protected ArrayList<Person> getPeople() {
         return this.people;
     }
 
@@ -49,8 +49,9 @@ public class Map {
             System.out.println("No such person on map");
             return false;
         }
-        p.getChunk();
-        p.setChunk(null);
+        p.getChunk().removePerson(p);
+        p.removeChunk();
+        return true;
     }
 
 }
