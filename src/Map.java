@@ -133,8 +133,19 @@ public class Map {
                 } else {
                     // valid chunk
                     if (!this.getChunks()[i][j].getPeople().isEmpty()) {
-                        // person
-                        outStr = String.join("", outStr, "[C]");
+                        for (Object per:this.getChunks()[i][j].getPeople()) {
+                            if (((Person) per).getPC()) {
+                                // pc
+                                outStr = String.join("", outStr, "[P]");
+                            } else if (per instanceof Enemy) {
+                                // enemy
+                                outStr = String.join("", outStr, "[E]");
+                            } else {
+                                // npc
+                                outStr = String.join("", outStr, "[C]");
+                            }
+                        }
+
                     } else {
                         // no person
                         outStr = String.join("", outStr, "[O]");
@@ -225,8 +236,19 @@ public class Map {
                         } else {
                             // valid chunk
                             if (!this.getChunks()[i][j].getPeople().isEmpty()) {
-                                // person
-                                outStr = String.join("", outStr, "[C]");
+                                for (Object per:this.getChunks()[i][j].getPeople()) {
+                                    if (((Person) per).getPC()) {
+                                        // pc
+                                        outStr = String.join("", outStr, "[P]");
+                                    } else if (per instanceof Enemy) {
+                                        // enemy
+                                        outStr = String.join("", outStr, "[E]");
+                                    } else {
+                                        // npc
+                                        outStr = String.join("", outStr, "[C]");
+                                    }
+                                }
+
                             } else {
                                 // no person
                                 outStr = String.join("", outStr, "[O]");
@@ -241,4 +263,61 @@ public class Map {
         return this.toString();
     }
 
+    public void startBattle(ArrayList<Person> enemies) {
+        // first is arbitrary right now
+        boolean runningBattle = true;
+        Person currentPerson;
+        Attack currentAttack;
+        Person currentTarget;
+        ArrayList<Person> currentEnemies = new ArrayList<>();
+        ArrayList<Person> currentAllies = new ArrayList<>();
+        // get lists of enemies and allies
+        for (Person p:enemies) {
+            if (p instanceof Enemy) {
+                currentEnemies.add((Enemy) p);
+            }
+        }
+        for (Person p:enemies) {
+            if (!(p instanceof Enemy)) {
+                currentAllies.add(p);
+            }
+        }
+        int turn = 0;
+        // do actual battle
+        while (runningBattle) {
+            // get current person, their attack, and their target
+            currentPerson = enemies.get(turn);
+            if (currentPerson instanceof Enemy) {
+                currentTarget = currentPerson.chooseTarget(currentAllies);
+            } else {
+                currentTarget = currentPerson.chooseTarget(currentEnemies);
+            }
+            currentAttack = currentPerson.chooseAttack();
+            // perform attack on target
+            currentPerson.attack(currentTarget, currentAttack);
+            // if target dies, remove them from the battle
+            if (!currentTarget.isAlive()) {
+                if (currentTarget.getPC()) {
+                    // if player dies, end battle
+                    System.out.println("You have died.");
+                    runningBattle = false;
+                } else {
+                    System.out.println(currentTarget.getName() + " has died.");
+                    if (currentAllies.contains(currentTarget)) {
+                        currentAllies.remove(currentTarget);
+                    } else {
+                        currentEnemies.remove(currentTarget);
+                    }
+                }
+            }
+            // if a side runs out of people, end battle
+            if (currentEnemies.isEmpty() || currentAllies.isEmpty()) {
+                runningBattle = false;
+            }
+            turn++;
+            if (turn >= enemies.size()) {
+                turn = 0;
+            }
+        }
+    }
 }

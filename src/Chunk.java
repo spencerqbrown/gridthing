@@ -128,6 +128,30 @@ public class Chunk {
             p.setY(this.getY());
             p.setChunk(this);
             this.getMap().getPeople().add(p);
+            ArrayList<Person> enemies = new ArrayList<>();
+            if (p.getPC()) {
+                // if pc is moving onto chunk check for enemies
+                for (Object q:this.getPeople()) {
+                    if (q instanceof Enemy) {
+                        enemies.add((Person) q);
+                    }
+                }
+                if (enemies.size() > 0) {
+                    // if enemies are present, fight them
+                    enemies.add(p);
+                    this.getMap().startBattle(enemies);
+                }
+            } else if (p instanceof Enemy) {
+                // if enemy is moving onto chunk check for pc
+                for (Object q:this.getPeople()) {
+                    if (((Person) q).getPC()) {
+                        // if pc is present, fight them
+                        enemies.add((Person) q);
+                        enemies.add(p);
+                        this.getMap().startBattle(enemies);
+                    }
+                }
+            }
             return true;
         }
         System.out.println("Chunk is full");
@@ -166,4 +190,9 @@ public class Chunk {
     public void setMap(Map map) {
         this.map = map;
     }
+
+    protected void startBattle(ArrayList<Person> people) {
+
+    }
+
 }
