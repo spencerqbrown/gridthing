@@ -7,28 +7,14 @@ public class App {
 
     public static void main(String[] args) {
         App app = new App();
-        app.initializeWorld();
+        app.initializeWorld("TEST1");
         Scanner input = new Scanner(System.in);
-        String inString = "";
-        // TODO this doesn't work, need to do a multithreading thing
-        while (inString != "q") {
-            inString = input.next();
-            if (inString == "q") {
-                break;
-            }
-            if (inString == "n") {
-                app.movePerson(app.getPc(), 0);
-            }
-            if (inString == "e") {
-                app.movePerson(app.getPc(), 1);
-            }
-            if (inString == "s") {
-                app.movePerson(app.getPc(), 2);
-            }
-            if (inString == "w") {
-                app.movePerson(app.getPc(), 3);
-            }
+        String inString;
+        inString = input.next();
+        if (inString.equals("q")) {
+            return;
         }
+        app.movePerson(app.getPc(), inString.charAt(0));
     }
 
     protected Map getMap() {
@@ -47,32 +33,52 @@ public class App {
         this.pc = pc;
     }
 
-    public boolean initializeWorld() {
+    public boolean initializeWorld(String mapType) {
         if ((this.getMap() == null) && (this.getPc() == null)) {
-            this.setMap(new Map());
             this.setPc(new Person(0, 0, "PC", true));
             Chunk core = new Chunk(null, null, null, null);
-            this.getMap().placeChunk(core, true);
+            if (mapType == null) {
+                // current default
+                this.setMap(new Map(3, 3));
+                this.getMap().placeChunk(core, 1, 1);
+            } else if (mapType.equals("TEST1")) {
+                this.setMap(new Map(10, 10));
+                this.getMap().placeChunk(core, 1, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 2, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 3, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 4, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 5, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 5, 2);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 5, 3);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 6, 3);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 6, 4);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 7, 3);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 7, 4);
+            }
             core.addPerson(this.getPc());
+            System.out.println(map.toString());
             return true;
         }
         System.out.println("World already initialized");
         return false;
     }
 
-    public boolean movePerson(Person p, int direction) {
+    public boolean movePerson(Person p, char dir) {
         if (!this.getMap().getPeople().contains(p)) {
             System.out.println("This person is not in map");
             return false;
         }
         Chunk curChunk = p.getChunk();
-        if (p.getChunk().getChunks()[direction] == null) {
+        System.out.println(dir);
+        if (p.getChunk().getDir(dir) == null) {
             System.out.println("No chunk in that direction");
             return false;
         }
-        Chunk chunkToEnter = curChunk.getChunks()[direction];
+        Chunk chunkToEnter = curChunk.getDir(dir);
         p.removeChunk();
         chunkToEnter.addPerson(p);
+        p.setChunk(chunkToEnter);
+        System.out.println(this.getMap().toString());
         return true;
     }
 
