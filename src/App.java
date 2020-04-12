@@ -10,11 +10,15 @@ public class App {
         app.initializeWorld("TEST1");
         Scanner input = new Scanner(System.in);
         String inString;
-        inString = input.next();
-        if (inString.equals("q")) {
-            return;
+        boolean keepRunning = true;
+        while (keepRunning) {
+            inString = input.nextLine();
+            if (inString.equals("q")) {
+                keepRunning = false;
+            } else {
+                app.movePerson(app.getPc(), inString.charAt(0));
+            }
         }
-        app.movePerson(app.getPc(), inString.charAt(0));
     }
 
     protected Map getMap() {

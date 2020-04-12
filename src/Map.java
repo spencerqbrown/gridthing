@@ -39,13 +39,13 @@ public class Map {
         if (x - 1 > 0) {
             linkChunks(c, this.getChunks()[y][x-1], 'w');
         }
-        // n
-        if (y + 1 < this.ySize) {
-            linkChunks(c, this.getChunks()[y+1][x], 'n');
-        }
         // s
+        if (y + 1 < this.ySize) {
+            linkChunks(c, this.getChunks()[y+1][x], 's');
+        }
+        // n
         if (y - 1 > 0) {
-            linkChunks(c, this.getChunks()[y-1][x], 's');
+            linkChunks(c, this.getChunks()[y-1][x], 'n');
         }
         return true;
     }
@@ -53,7 +53,7 @@ public class Map {
     private void linkChunks(Chunk c, Chunk d, char dir) {
         // check that chunks are valid
         if ((c != null) && (d != null)) {
-            System.out.println("LINKED CHUNKS: " + "[" + c.getX() + ", " + c.getY() + "], " + "[" + d.getX() + ", " + d.getY() + "]");
+            //System.out.println("LINKED CHUNKS: " + "[" + c.getX() + ", " + c.getY() + "], " + "[" + d.getX() + ", " + d.getY() + "]");
             // link d onto c in direction dir
             c.link(d, dir);
         }
