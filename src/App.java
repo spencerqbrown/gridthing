@@ -11,10 +11,21 @@ public class App {
         Scanner input = new Scanner(System.in);
         String inString;
         boolean keepRunning = true;
+//        try {
+//            Thread.sleep(1000);
+//            app.movePerson(app.getPc(), 'e');
+//        } catch (InterruptedException e) {
+//            System.out.println("EXCEPTION HAPPENED");
+//            e.printStackTrace();
+//            return;
+//        }
+
         while (keepRunning) {
             inString = input.nextLine();
             if (inString.equals("q")) {
                 keepRunning = false;
+            } else if (inString.length() == 0) {
+                continue;
             } else {
                 app.movePerson(app.getPc(), inString.charAt(0));
             }
@@ -58,9 +69,20 @@ public class App {
                 this.getMap().placeChunk(new Chunk(null, null, null, null), 6, 4);
                 this.getMap().placeChunk(new Chunk(null, null, null, null), 7, 3);
                 this.getMap().placeChunk(new Chunk(null, null, null, null), 7, 4);
+            } else if (mapType.equals("TEST2")) {
+                this.setMap(new Map(7, 5));
+                this.getMap().placeChunk(core, 1, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 2, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 3, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 4, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 5, 1);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 5, 2);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 5, 3);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 6, 3);
+                this.getMap().placeChunk(new Chunk(null, null, null, null), 6, 4);
             }
             core.addPerson(this.getPc());
-            System.out.println(map.toString());
+            System.out.print(map.toString());
             return true;
         }
         System.out.println("World already initialized");
@@ -73,7 +95,6 @@ public class App {
             return false;
         }
         Chunk curChunk = p.getChunk();
-        System.out.println(dir);
         if (p.getChunk().getDir(dir) == null) {
             System.out.println("No chunk in that direction");
             return false;
@@ -82,7 +103,7 @@ public class App {
         p.removeChunk();
         chunkToEnter.addPerson(p);
         p.setChunk(chunkToEnter);
-        System.out.println(this.getMap().toString());
+        System.out.print(this.getMap().cameraRender(7, 5));
         return true;
     }
 

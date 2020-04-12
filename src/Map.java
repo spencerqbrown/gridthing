@@ -146,4 +146,99 @@ public class Map {
         return outStr;
     }
 
+    public String cameraRender(int xlim, int ylim) {
+        for (Person p:this.getPeople()) {
+            if (p.getPC()) {
+                // render map relative to pc
+                int x = p.getX();
+                int y = p.getY();
+                int xwest = xlim / 2;
+                int xeast = xlim / 2;
+                // odd xlim and ylim will have a space for pc, even it must be taken out of xwest and ynorth
+                // this way pc will be slightly flushed up left
+                // this is not ideal so xlim and ylim should be odd and pc is centered
+                if (xlim % 2 == 0) {
+                    xwest--;
+                }
+                int ysouth = ylim / 2;
+                int ynorth = ylim / 2;
+                if (ylim % 2 == 0) {
+                    ynorth--;
+                }
+
+                // get edges
+                // east and west
+                int xeastedge = x + xeast;
+                int xwestedge = x - xwest;
+                if (xwestedge < 0) {
+                    if ((xeastedge + Math.abs(xwestedge)) < this.xSize) {
+                        xeastedge = xeastedge + Math.abs(xwestedge); // shift east edge east
+                        xwestedge = 0; // flush west edge to map west border
+                    } else {
+                        // if map is too small for camera view
+                        xeastedge = this.xSize - 1;
+                        xwestedge = 0;
+                    }
+                }
+                if (xeastedge >= this.xSize) {
+                    if ((xwestedge - (xeastedge - this.xSize + 1) >= 0)) {
+                        xwestedge = xwestedge - (xeastedge - this.xSize + 1); // shift west edge west
+                        xeastedge = this.xSize - 1; // flush east edge to map east border
+                    } else {
+                        // if map is too small for camera view, put edges at map side borders
+                        xwestedge = 0;
+                        xeastedge = this.xSize - 1;
+                    }
+                }
+
+                // north and south
+                int ynorthedge = y - ynorth;
+                int ysouthedge = y + ysouth;
+                if (ynorthedge < 0) {
+                    if ((ysouthedge + Math.abs(ynorthedge)) < this.ySize) {
+                        ysouthedge = ysouthedge + Math.abs(ynorthedge); // shift north edge north
+                        ynorthedge = 0; // flush north edge to map north border
+                    } else {
+                        // if map is too small for camera view
+                        ysouthedge = this.ySize - 1;
+                        ynorthedge = 0;
+                    }
+                }
+                if (ysouthedge >= this.ySize) {
+                    if ((ysouthedge - (this.ySize - ynorthedge + 1) >= 0)) {
+                        ynorthedge = ysouthedge - (this.ySize - ynorthedge + 1); // shift north edge north
+                        ysouthedge = this.ySize - 1; // flush south edge to map south border
+                    } else {
+                        // if map is too small for camera view, put edges at map side borders
+                        ynorthedge = 0;
+                        ysouthedge = this.ySize - 1;
+                    }
+                }
+
+                // actual render
+                String outStr = "";
+                for (int i = ynorthedge; i <= ysouthedge; i++) {
+                    for (int j = xwestedge; j <= xeastedge; j++) {
+                        if (this.getChunks()[i][j] == null) {
+                            // empty space
+                            outStr = String.join("", outStr, "[ ]");
+                        } else {
+                            // valid chunk
+                            if (!this.getChunks()[i][j].getPeople().isEmpty()) {
+                                // person
+                                outStr = String.join("", outStr, "[C]");
+                            } else {
+                                // no person
+                                outStr = String.join("", outStr, "[O]");
+                            }
+                        }
+                    }
+                    outStr = String.join("", outStr, "\n");
+                }
+                return outStr;
+            }
+        }
+        return this.toString();
+    }
+
 }
