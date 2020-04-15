@@ -85,13 +85,14 @@ public class App {
             if (testType == "TEST3") {
                 this.getPc().getAttacks().add(new Attack("BIG ATTACK", 4, 6, null));
                 this.getPc().getAttacks().add(new Attack("SMALL ATTACK", 1, 3, null));
-                Enemy testEnemy = new Enemy(0, 0, "BIG DOG", 5);
+                Enemy testEnemy = new Enemy(0, 0, "BIG DOG", 5, 50, 100);
                 testEnemy.getAttacks().add(new Attack("BITE", 0, 2, null));
                 testEnemy.getAttacks().add(new Attack("SCRATCH", 1, 3, null));
-                testEnemy.getAttacks().add(new Attack("DEVOUR", 10, 10, null));
+                //testEnemy.getAttacks().add(new Attack("DEVOUR", 10, 10, null));
+                // add a better way to put things on the map
                 core.getE().getE().getE().getE().getS().getS().getE().getE().getS().addPerson(testEnemy);
             }
-            System.out.print(map.toString());
+            System.out.print(map.fullMap());
             System.out.print(map.cameraRender(7, 5));
             return true;
         }
@@ -112,7 +113,6 @@ public class App {
         Chunk chunkToEnter = curChunk.getDir(dir);
         p.removeChunk();
         chunkToEnter.addPerson(p);
-        p.setChunk(chunkToEnter);
         System.out.print(this.getMap().cameraRender(7, 5));
         return true;
     }

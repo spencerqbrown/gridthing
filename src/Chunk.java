@@ -180,6 +180,7 @@ public class Chunk {
 
     protected boolean removePerson(Person p) {
         if (this.getPeople().contains(p)) {
+            this.getMap().removePerson(p);
             this.getPeople().remove(p);
             return true;
         }

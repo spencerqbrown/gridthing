@@ -14,6 +14,10 @@ public class Person {
     private ArrayList<String> effects;
     private int hp;
     private boolean alive;
+    private int level;
+    private int nextLevel;
+    private int xp;
+    private final double xpMultiplier = 1.2;
 
     public void setAlive(boolean alive) {
         this.alive = alive;
@@ -33,6 +37,48 @@ public class Person {
         this.hp = hp;
         this.attacks = new ArrayList<>();
         this.alive = true;
+        this.level = 1;
+        this.nextLevel = 100;
+    }
+
+    public ArrayList<String> getEffects() {
+        return effects;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getNextLevel() {
+        return nextLevel;
+    }
+
+    public int getXp() {
+        return xp;
+    }
+
+    public double getXpMultiplier() {
+        return xpMultiplier;
+    }
+
+    public void setAble(boolean able) {
+        this.able = able;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setNextLevel(int nextLevel) {
+        this.nextLevel = nextLevel;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
     protected boolean takeDamage(int dmg) {
@@ -43,6 +89,39 @@ public class Person {
             die();
         }
         return true;
+    }
+
+    protected void gainXP(int xp, boolean first) {
+        // xp message if first xp gain from this round of xp
+        if (first) {
+            System.out.println(this.getName() + " gained " + xp + " XP!");
+        }
+        // get new xp
+        int newXp = xp + this.getXp();
+        // get leftover if it exists
+        int excess = this.getNextLevel() - newXp;
+        // level up if over xp limit for level
+        if (excess <= 0) {
+            levelUp(Math.abs(excess));
+        } else {
+            // else add the xp gained
+            this.setXp(newXp);
+        }
+    }
+
+    private void levelUp(int excess) {
+        // increment level
+        this.setLevel(this.getLevel() + 1);
+        // increase xp required for next level
+        this.setNextLevel((int) (this.getNextLevel() * this.getXpMultiplier()));
+        // add excess xp to next level
+        this.gainXP(excess, false);
+        // level up message
+        if (this.getPC()) {
+            System.out.print("You have leveled up! Now level " + this.getLevel());
+        } else {
+            System.out.print(this.getName() + " has leveled up! Now level " + this.getLevel());
+        }
     }
 
     private void die() {
@@ -59,7 +138,7 @@ public class Person {
             // get choose attack menu
             String attacksMenu = "Choose your attack: ";
             for (int i = 0; i < this.getAttacks().size(); i++) {
-                attacksMenu = attacksMenu + Integer.toString(i) + ". " + this.getAttacks().get(i).getName() + " ";
+                attacksMenu = attacksMenu + i + ". " + this.getAttacks().get(i).getName() + " ";
             }
 
             boolean choosing = true;

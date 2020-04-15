@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Map {
 
@@ -6,12 +7,20 @@ public class Map {
     private ArrayList<Person> people;
     private int xSize;
     private int ySize;
+    private HashMap<String, String> mapIcons;
 
     public Map(int x, int y) {
         this.chunks = new Chunk[y][x];
         this.people = new ArrayList<>();
         this.xSize = x;
         this.ySize = y;
+        this.mapIcons = new HashMap<>();
+        this.mapIcons.put("chunk0", "[ ]");
+        this.mapIcons.put("chunk1", "[O]");
+        this.mapIcons.put("pc", "[P]");
+        this.mapIcons.put("enemy", "[E]");
+        this.mapIcons.put("npc", "[C]");
+        this.mapIcons.put("border", "[B]");
     }
 
     protected boolean placeChunk(Chunk c, int x, int y) {
@@ -113,13 +122,12 @@ public class Map {
         return true;
     }
 
-    private boolean removePerson(Person p) {
+    protected boolean removePerson(Person p) {
         if (!this.getPeople().contains(p)) {
             System.out.println("No such person on map");
             return false;
         }
-        p.getChunk().removePerson(p);
-        p.removeChunk();
+        this.getPeople().remove(p);
         return true;
     }
 
@@ -129,32 +137,36 @@ public class Map {
             for (int j = 0; j < this.xSize; j++) {
                 if (this.getChunks()[i][j] == null) {
                     // empty space
-                    outStr = String.join("", outStr, "[ ]");
+                    outStr = String.join("", outStr, this.mapIcons.get("chunk0"));
                 } else {
                     // valid chunk
                     if (!this.getChunks()[i][j].getPeople().isEmpty()) {
                         for (Object per:this.getChunks()[i][j].getPeople()) {
                             if (((Person) per).getPC()) {
                                 // pc
-                                outStr = String.join("", outStr, "[P]");
+                                outStr = String.join("", outStr, this.mapIcons.get("pc"));
                             } else if (per instanceof Enemy) {
                                 // enemy
-                                outStr = String.join("", outStr, "[E]");
+                                outStr = String.join("", outStr, this.mapIcons.get("enemy"));
                             } else {
                                 // npc
-                                outStr = String.join("", outStr, "[C]");
+                                outStr = String.join("", outStr, this.mapIcons.get("npc"));
                             }
                         }
 
                     } else {
                         // no person
-                        outStr = String.join("", outStr, "[O]");
+                        outStr = String.join("", outStr, this.mapIcons.get("chunk1"));
                     }
                 }
             }
             outStr = String.join("", outStr, "\n");
         }
         return outStr;
+    }
+
+    public String fullMap() {
+        return cameraRender(this.xSize, this.ySize);
     }
 
     public String cameraRender(int xlim, int ylim) {
@@ -232,26 +244,26 @@ public class Map {
                     for (int j = xwestedge; j <= xeastedge; j++) {
                         if (this.getChunks()[i][j] == null) {
                             // empty space
-                            outStr = String.join("", outStr, "[ ]");
+                            outStr = String.join("", outStr, this.mapIcons.get("chunk0"));
                         } else {
                             // valid chunk
                             if (!this.getChunks()[i][j].getPeople().isEmpty()) {
                                 for (Object per:this.getChunks()[i][j].getPeople()) {
                                     if (((Person) per).getPC()) {
                                         // pc
-                                        outStr = String.join("", outStr, "[P]");
+                                        outStr = String.join("", outStr, this.mapIcons.get("pc"));
                                     } else if (per instanceof Enemy) {
                                         // enemy
-                                        outStr = String.join("", outStr, "[E]");
+                                        outStr = String.join("", outStr, this.mapIcons.get("enemy"));
                                     } else {
                                         // npc
-                                        outStr = String.join("", outStr, "[C]");
+                                        outStr = String.join("", outStr, this.mapIcons.get("npc"));
                                     }
                                 }
 
                             } else {
                                 // no person
-                                outStr = String.join("", outStr, "[O]");
+                                outStr = String.join("", outStr, this.mapIcons.get("chunk1"));
                             }
                         }
                     }
@@ -302,11 +314,12 @@ public class Map {
                     System.out.println("You have died.");
                     runningBattle = false;
                 } else {
-                    System.out.println(currentTarget.getName() + " has died.");
                     if (currentAllies.contains(currentTarget)) {
                         currentAllies.remove(currentTarget);
                     } else {
                         currentEnemies.remove(currentTarget);
+                        // gain xp from killing enemy
+                        currentPerson.gainXP(((Enemy) currentTarget).takeXP(), true);
                     }
                 }
             }
