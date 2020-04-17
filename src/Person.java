@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Scanner;
 
@@ -18,6 +19,9 @@ public class Person {
     private int nextLevel;
     private int xp;
     private final double xpMultiplier = 1.2;
+    private HashMap<String, ArrayList<Item>> inventory;
+    private Weapon equippedWeapon;
+    private char dir;
 
     public void setAlive(boolean alive) {
         this.alive = alive;
@@ -39,6 +43,13 @@ public class Person {
         this.alive = true;
         this.level = 1;
         this.nextLevel = 100;
+        this.inventory = new HashMap<>();
+        this.equippedWeapon = null;
+        this.dir = 's';
+    }
+
+    public char getDir() {
+        return dir;
     }
 
     public ArrayList<String> getEffects() {
@@ -47,6 +58,18 @@ public class Person {
 
     public int getHp() {
         return hp;
+    }
+
+    public void setPc(boolean pc) {
+        this.pc = pc;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+
+    public void setDir(char dir) {
+        this.dir = dir;
     }
 
     public int getLevel() {
@@ -267,6 +290,48 @@ public class Person {
         this.getChunk().removePerson(this);
         this.setChunk(null);
         return true;
+    }
+
+    protected void pickup(Item item) {
+        if (this.inventory.get(item.getCategory()) == null) {
+            this.inventory.put(item.getCategory(), new ArrayList<>());
+        }
+        this.inventory.get(item.getCategory()).add(item);
+    }
+
+    public Weapon getEquippedWeapon() {
+        return equippedWeapon;
+    }
+
+    public void setEquippedWeapon(Weapon equippedWeapon) {
+        this.equippedWeapon = equippedWeapon;
+    }
+
+    protected void equip(Item item) {
+        // possibly add system where an item cannot be equipped if certain stats are too low
+        // if weapon
+        if (item instanceof Weapon) {
+            // unequip old weapon
+            if (this.equippedWeapon != null) {
+                unequip(this.equippedWeapon);
+            }
+            // equip new weapon and add its attacks to person attacks
+            this.equippedWeapon = (Weapon) item;
+            for (Attack a:this.getEquippedWeapon().getAttacks()) {
+                this.getAttacks().add(a);
+            }
+        } else if (item instanceof Armor) {
+            // TODO
+        } else {
+            // MORE CASES CAN BE ADDED
+        }
+    }
+
+    private void unequip(Weapon weapon) {
+        for (Attack a:weapon.getAttacks()) {
+            this.getAttacks().remove(a);
+        }
+        this.equippedWeapon = null;
     }
 
 }

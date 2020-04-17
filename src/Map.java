@@ -18,6 +18,10 @@ public class Map {
         this.mapIcons.put("chunk0", "[ ]");
         this.mapIcons.put("chunk1", "[O]");
         this.mapIcons.put("pc", "[P]");
+        this.mapIcons.put("pcs", "[v]");
+        this.mapIcons.put("pcn", "[^]");
+        this.mapIcons.put("pce", "[>]");
+        this.mapIcons.put("pcw", "[<]");
         this.mapIcons.put("enemy", "[E]");
         this.mapIcons.put("npc", "[C]");
         this.mapIcons.put("border", "[B]");
@@ -68,8 +72,36 @@ public class Map {
         }
     }
 
+    private boolean placeAt(Object o, int x, int y) {
+        Chunk chunk = this.chunkAt(x, y);
+        if (chunk == null) {
+            System.out.println("No such chunk");
+            return false;
+        } else {
+            if (o instanceof Item) {
+                // THIS MAY NOT WORK
+                chunk.getItems().add((Item) o);
+            } else if (o instanceof Person) {
+                // THIS MAY NOT WORK
+                chunk.addPerson((Person) o);
+            } else if (o instanceof Building) {
+                chunk.setBuilding((Building) o);
+            }
+        }
+        return true;
+    }
+
     private Chunk[][] getChunks() {
         return this.chunks;
+    }
+
+    private Chunk chunkAt(int x, int y) {
+        if ((x >= this.xSize) || (y >= this.ySize) || (y < 0) || (x < 0)) {
+            System.out.println("Out of bounds");
+            return null;
+        }
+        Chunk chunk = this.getChunks()[y][x];
+        return chunk;
     }
 
     protected ArrayList<Person> getPeople() {
@@ -144,7 +176,7 @@ public class Map {
                         for (Object per:this.getChunks()[i][j].getPeople()) {
                             if (((Person) per).getPC()) {
                                 // pc
-                                outStr = String.join("", outStr, this.mapIcons.get("pc"));
+                                outStr = String.join("", outStr, this.mapIcons.get("pc" + ((Person) per).getDir()));
                             } else if (per instanceof Enemy) {
                                 // enemy
                                 outStr = String.join("", outStr, this.mapIcons.get("enemy"));
@@ -251,7 +283,7 @@ public class Map {
                                 for (Object per:this.getChunks()[i][j].getPeople()) {
                                     if (((Person) per).getPC()) {
                                         // pc
-                                        outStr = String.join("", outStr, this.mapIcons.get("pc"));
+                                        outStr = String.join("", outStr, this.mapIcons.get("pc" + ((Person) per).getDir()));
                                     } else if (per instanceof Enemy) {
                                         // enemy
                                         outStr = String.join("", outStr, this.mapIcons.get("enemy"));

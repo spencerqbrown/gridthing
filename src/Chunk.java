@@ -11,6 +11,8 @@ public class Chunk {
     private int x;
     private int y;
     private boolean coreChunk;
+    private ArrayList<Item> items;
+    private Building building;
 
     public void setE(Chunk e) {
         this.e = e;
@@ -52,6 +54,10 @@ public class Chunk {
         return s;
     }
 
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
     public boolean isCoreChunk() {
         return coreChunk;
     }
@@ -61,6 +67,14 @@ public class Chunk {
     }
 
     private Map map;
+
+    public Building getBuilding() {
+        return building;
+    }
+
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
 
     public Chunk(Chunk n, Chunk e, Chunk s, Chunk w) {
         this.e = null;
@@ -73,6 +87,8 @@ public class Chunk {
         this.y = 0;
         this.coreChunk = false;
         this.map = null;
+        this.items = new ArrayList<>();
+        this.building = null;
     }
 
     protected ArrayList getPeople() {
@@ -192,8 +208,10 @@ public class Chunk {
         this.map = map;
     }
 
-    protected void startBattle(ArrayList<Person> people) {
-
-    }
+//    public void addItem(Item item) {
+//        if (item.getCategory().equals("Weapon")) {
+//            this.getItems().add((Weapon) item);
+//        }
+//    }
 
 }
