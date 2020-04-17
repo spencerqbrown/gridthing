@@ -24,6 +24,8 @@ public class App {
             inString = input.nextLine();
             if (inString.equals("q")) {
                 keepRunning = false;
+            } else if (inString.equals("l")) {
+                app.getPc().look();
             } else if (inString.length() == 0) {
                 continue;
             } else {
@@ -85,6 +87,11 @@ public class App {
             if (testType == "TEST3") {
                 this.getPc().getAttacks().add(new Attack("KICK", 4, 6, null, 0));
                 this.getPc().getAttacks().add(new Attack("PUNCH", 1, 3, null, 0));
+                Attack[] swordattacks = new Attack[2];
+                swordattacks[0] = new Attack("SLASH", 2, 4, null, 0);
+                swordattacks[1] = new Attack("STAB", 0, 5, null, 0);
+                Weapon sword = new Weapon("SWORD", swordattacks);
+                this.getMap().placeAt(sword, 7, 3);
                 Enemy testEnemy = new Enemy(0, 0, "BIG DOG", 5, 50, 100);
                 testEnemy.getAttacks().add(new Attack("BITE", 0, 2, null, 0));
                 testEnemy.getAttacks().add(new Attack("SCRATCH", 1, 3, null, 0));

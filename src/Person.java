@@ -334,4 +334,66 @@ public class Person {
         this.equippedWeapon = null;
     }
 
+    protected void look() {
+        Chunk chunk = this.getChunk();
+        System.out.println(chunk.getDesc());
+        Scanner interactSelect = new Scanner(System.in);
+        boolean keepSelecting  = true;
+        String inString;
+        int selection;
+        // look at items
+        if (chunk.getItems().size() > 0) {
+            // while there are items to select or player is not done
+            while (keepSelecting) {
+                // make menu string
+                String itemString = "Pick up any of these items?";
+                for (int i = 0; i < chunk.getItems().size(); i++) {
+                    itemString = itemString + " " + i + ". " + chunk.getItems().get(i).getName();
+                }
+                itemString = itemString + " (n for none)";
+                System.out.println(itemString);
+                inString = interactSelect.nextLine();
+                if (inString.equals("n")) {
+                    keepSelecting = false;
+                } else {
+                    try {
+                        // attempt to pick up selected item
+                        selection = Integer.parseInt(inString);
+                        if ((selection < 0) || (selection >= chunk.getItems().size())) {
+                            System.out.println("Invalid selection");
+                        } else {
+                            Item selectedItem = chunk.getItems().get(selection);
+                            this.pickup(selectedItem);
+                            chunk.getItems().remove(selectedItem);
+                            System.out.print("Picked up " + selectedItem.getName() + ".");
+                            if (chunk.getItems().size() == 0) {
+                                keepSelecting = false;
+                            }
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid selection");
+                    }
+                }
+            }
+        }
+
+        // building select
+        if (chunk.getBuilding() != null) {
+            if (!chunk.getBuilding().isLocked()) {
+                System.out.println("Enter " + chunk.getBuilding().getName() + "? (y/n)");
+                inString = interactSelect.nextLine();
+                if (inString.equals("y")) {
+                    this.enterBuilding(chunk.getBuilding());
+            } else {
+                System.out.println(chunk.getBuilding().getName() + " is locked.");
+            }
+
+        }
+    }
+
 }
+
+    private void enterBuilding(Building building) {
+        // TODO
+    }
+    }

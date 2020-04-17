@@ -72,7 +72,7 @@ public class Map {
         }
     }
 
-    private boolean placeAt(Object o, int x, int y) {
+    public boolean placeAt(Object o, int x, int y) {
         Chunk chunk = this.chunkAt(x, y);
         if (chunk == null) {
             System.out.println("No such chunk");

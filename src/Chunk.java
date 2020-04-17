@@ -13,6 +13,7 @@ public class Chunk {
     private boolean coreChunk;
     private ArrayList<Item> items;
     private Building building;
+    private String desc;
 
     public void setE(Chunk e) {
         this.e = e;
@@ -89,6 +90,7 @@ public class Chunk {
         this.map = null;
         this.items = new ArrayList<>();
         this.building = null;
+        this.desc = "default chunk description";
     }
 
     protected ArrayList getPeople() {
@@ -113,6 +115,10 @@ public class Chunk {
 
     protected void setX(int x) {
         this.x = x;
+    }
+
+    public String getDesc() {
+        return desc;
     }
 
     protected void setY(int y) {
