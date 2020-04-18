@@ -21,6 +21,11 @@ public class Person {
     private final double xpMultiplier = 1.2;
     private HashMap<String, ArrayList<Item>> inventory;
     private Weapon equippedWeapon;
+
+    public HashMap<String, ArrayList<Item>> getInventory() {
+        return inventory;
+    }
+
     private char dir;
 
     public void setAlive(boolean alive) {
