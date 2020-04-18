@@ -7,5 +7,6 @@ public class Armor extends Item {
         super(name);
         this.def = def;
         this.special = special;
+        this.setEquippable(true);
     }
 }

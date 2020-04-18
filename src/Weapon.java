@@ -6,6 +6,7 @@ public class Weapon extends Item {
         super(name);
         this.attacks = attacks;
         this.setCategory("Weapon");
+        this.setEquippable(true);
     }
 
     public Attack[] getAttacks() {

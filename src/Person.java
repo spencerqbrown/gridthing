@@ -314,29 +314,40 @@ public class Person {
 
     protected void equip(Item item) {
         // possibly add system where an item cannot be equipped if certain stats are too low
-        // if weapon
-        if (item instanceof Weapon) {
-            // unequip old weapon
-            if (this.equippedWeapon != null) {
-                unequip(this.equippedWeapon);
+        if (item.isEquippable()) {
+            // if weapon
+            if (item instanceof Weapon) {
+                // unequip old weapon
+                if (this.equippedWeapon != null) {
+                    unequip(this.equippedWeapon);
+                }
+                // equip new weapon and add its attacks to person attacks
+                this.equippedWeapon = (Weapon) item;
+                for (Attack a:this.getEquippedWeapon().getAttacks()) {
+                    this.getAttacks().add(a);
+                }
+                item.setEquipped(true);
+                System.out.println("Equipped " + item.getName() + ".");
+            } else if (item instanceof Armor) {
+                // TODO
+            } else {
+                // MORE CASES CAN BE ADDED
             }
-            // equip new weapon and add its attacks to person attacks
-            this.equippedWeapon = (Weapon) item;
-            for (Attack a:this.getEquippedWeapon().getAttacks()) {
-                this.getAttacks().add(a);
-            }
-        } else if (item instanceof Armor) {
-            // TODO
         } else {
-            // MORE CASES CAN BE ADDED
+            System.out.println(item.getName() + " is not equippable.");
         }
     }
 
-    private void unequip(Weapon weapon) {
-        for (Attack a:weapon.getAttacks()) {
-            this.getAttacks().remove(a);
+    protected void unequip(Item item) {
+        if (item instanceof Weapon) {
+            for (Attack a:((Weapon) item).getAttacks()) {
+                this.getAttacks().remove(a);
+            }
+            this.equippedWeapon = null;
         }
-        this.equippedWeapon = null;
+        item.setEquipped(false);
+        // add cases for other equippable items later
+
     }
 
     protected void look() {
@@ -389,16 +400,31 @@ public class Person {
                 inString = interactSelect.nextLine();
                 if (inString.equals("y")) {
                     this.enterBuilding(chunk.getBuilding());
-            } else {
-                System.out.println(chunk.getBuilding().getName() + " is locked.");
+                } else {
+                    System.out.println(chunk.getBuilding().getName() + " is locked.");
+                }
+
             }
-
         }
-    }
 
-}
+    }
 
     private void enterBuilding(Building building) {
         // TODO
     }
+
+    protected void dropItem(Item item) {
+        // if person is holding item
+        if (this.getInventory().get(item.getCategory()).contains(item)) {
+            if (item.isEquipped()) {
+                this.unequip(item);
+            }
+            this.getInventory().get(item.getCategory()).remove(item);
+            System.out.println(item.getName() + " dropped.");
+            this.getChunk().getItems().add(item);
+        } else {
+            System.out.println("Item not found on " + this.getName());
+        }
     }
+
+}
